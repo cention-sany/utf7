@@ -205,7 +205,6 @@ func (e utf7Encoder) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err
 			return 0, 0, nil
 		}
 	}
-	//log.Println("Start", n, nSrc, atEOF)
 	for nSrc = 0; nSrc < n; {
 		if nDst >= nd {
 			return nDst, nSrc, transform.ErrShortDst
@@ -236,7 +235,6 @@ func (e utf7Encoder) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err
 			hasRuneStart = false
 		}
 		foundASCII = true
-		//log.Println("Middle", n, nSrc)
 		for tmp++; tmp < n && !canSelf(src[tmp]) && src[tmp] != '+'; tmp++ {
 			// if next printable ASCII code point found the loop stop
 			if utf8.RuneStart(src[tmp]) {
@@ -297,7 +295,6 @@ func (e utf7Encoder) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err
 		}
 
 		b = utf7enc(src[start:tmp])
-		//log.Println("sizes:", n, nSrc, tmp, maxRuneStart, len(b), atEOF, err, start, hasRuneStart, nd-nDst)
 		if len(b) < 2 || b[0] != '+' {
 			return nDst, nSrc, ErrBadUTF7 // Illegal code point in ASCII mode
 		}
@@ -390,32 +387,6 @@ func UTF7EncodeBytes(s []byte) []byte {
 		return nil
 	}
 	return output
-
-	// var c byte
-	// u := make([]byte, 0, len(s)*2)
-	// for i, n := 0, len(s); i < n; {
-	// 	if c = s[i]; canSelf(c) || c == '+' {
-	// 		i++
-	// 		if u = append(u, c); c == '+' {
-	// 			u = append(u, '-')
-	// 		}
-	// 		continue
-	// 	}
-	// 	start := i
-	// 	for i++; i < n && !canSelf(s[i]) && s[i] != '+'; i++ {
-	// 		// if next printable ASCII code point found the loop stop
-	// 	}
-	// 	u = append(u, utf7enc(s[start:i])...)
-	// 	if i != n {
-	// 		// printable ASCII found - check if BASE64 type
-	// 		if isModifiedBase64(s[i]) || s[i] == '-' {
-	// 			u = append(u, '-')
-	// 		}
-	// 	} else {
-	// 		u = append(u, '-')
-	// 	}
-	// }
-	// return u
 }
 
 // utf7enc converts string s from UTF-8 to UTF-16-BE, encodes the result as
@@ -470,46 +441,6 @@ func UTF7DecodeBytes(u []byte) ([]byte, error) {
 		return nil, err
 	}
 	return output, nil
-
-	// var implicit bool
-	// s = make([]byte, 0, len(u))
-	// for i, n := 0, len(u); i < n; i++ {
-	// 	if c := u[i]; ((c < u7min || c > u7max) &&
-	// 		c != '\t' && c != '\r' && c != '\n') ||
-	// 		c == '~' || c == '\\' {
-	// 		return nil, ErrBadUTF7 // Illegal code point in ASCII mode
-	// 	} else if c != '+' {
-	// 		s = append(s, c)
-	// 		continue
-	// 	}
-	// 	start := i + 1
-	// 	// Find the end of the Base64 or "+-" segment
-	// 	implicit = false
-	// 	for i++; i < n && u[i] != '-'; i++ {
-	// 		if !isModifiedBase64(u[i]) {
-	// 			if i == start {
-	// 				return nil, ErrBadUTF7 // '+' next char must modified base64
-	// 			}
-	// 			implicit = true
-	// 			break
-	// 		}
-	// 	}
-	// 	if i == start {
-	// 		if i == n {
-	// 			// did not find '-' sign
-	// 			return nil, ErrBadUTF7 // '+' can not at the end
-	// 		}
-	// 		s = append(s, '+') // Escape sequence "+-"
-	// 	} else if b := utf7dec(u[start:i]); len(b) > 0 {
-	// 		s = append(s, b...) // Control or non-ASCII code points in Base64
-	// 		if implicit {
-	// 			s = append(s, u[i]) // implicit shift
-	// 		}
-	// 	} else {
-	// 		return nil, ErrBadUTF7 // Null shift ("+...-+...-") or bad encoding
-	// 	}
-	// }
-	// return
 }
 
 // utf7dec extracts UTF-16-BE bytes from Base64 data and converts them to UTF-8.
@@ -553,9 +484,7 @@ func utf7dec(b64 []byte) []byte {
 			if r = utf16.DecodeRune(r, r2); r == uRepl {
 				return nil
 			}
-		} /* else if u7min <= r && r <= u7max {
-		 	return nil
-		} */
+		}
 		j += utf8.EncodeRune(s[j:], r)
 	}
 	return s[:j]

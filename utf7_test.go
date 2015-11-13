@@ -5,7 +5,6 @@
 package utf7
 
 import (
-	"log"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -274,7 +273,6 @@ func TestUTF7Inverse(t *testing.T) {
 
 func TestUTF7Random(t *testing.T) {
 	f := func(b []byte) bool {
-		log.Println("MAIN")
 		d := UTF7EncodeBytes(b)
 		d2, err := UTF7DecodeBytes(d)
 		if err != nil {
@@ -294,10 +292,6 @@ func TestUTF7Random(t *testing.T) {
 			b := make([]byte, 0, size*4)
 			for i := 0; i < size; i++ {
 				uni = r.Int() % 0x110000
-				//uni = r.Int() % 0x10000
-				// if uni >= 0xd800 && uni < 0xdfff {
-				// 	uni = 0xfffd
-				// }
 				u = rune(uni)
 				if !utf8.ValidRune(u) {
 					u = unicode.ReplacementChar
