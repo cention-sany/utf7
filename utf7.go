@@ -29,7 +29,7 @@ Rule 3: Space, tab, carriage return and line feed may also be represented direct
  as single ASCII bytes. Further content transfer encoding may be needed if using
  in email environment.
 */
-package enmime
+package utf7
 
 import (
 	"bytes"
