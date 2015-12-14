@@ -4,7 +4,7 @@ https://github.com/mxk/go-imap/blob/master/imap/utf7.go
 https://github.com/mxk/go-imap/blob/master/imap/utf7_test.go
 IMAP specification uses modified UTF-7. Following are the differences:
   1) Printable US-ASCII except & (0x20 to 0x25 and 0x27 to 0x7e) MUST
-represent by themselves.
+  represent by themselves.
   2) '&' is used to shift modified BASE64 instead of '+'.
   3) Can NOT use superfluous null shift (&...-&...- should be just &......-).
   4) ',' is used in BASE64 code instead of '/'.
