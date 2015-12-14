@@ -1,33 +1,35 @@
 /*
 This package modified from:
-https://github.com/mxk/go-imap/blob/master/imap/utf7.go utf7_test.go
+https://github.com/mxk/go-imap/blob/master/imap/utf7.go
+https://github.com/mxk/go-imap/blob/master/imap/utf7_test.go
 IMAP specification uses modified UTF-7. Following are the differences:
-1) Printable US-ASCII except & (0x20 to 0x25 and 0x27 to 0x7e) MUST
- represent by themselves.
-2) '&' is used to shift modified BASE64 instead of '+'.
-3) Can NOT use superfluous null shift (&...-&...- should be just &......-).
-4) ',' is used in BASE64 code instead of '/'
-5) '&' is represented '&-'. You can have many '&-&-&-&-'.
-6) No implicit shift from BASE64 to US-ASCII. All BASE64 must end with '-'.
+  1) Printable US-ASCII except & (0x20 to 0x25 and 0x27 to 0x7e) MUST
+represent by themselves.
+  2) '&' is used to shift modified BASE64 instead of '+'.
+  3) Can NOT use superfluous null shift (&...-&...- should be just &......-).
+  4) ',' is used in BASE64 code instead of '/'.
+  5) '&' is represented '&-'. You can have many '&-&-&-&-'.
+  6) No implicit shift from BASE64 to US-ASCII. All BASE64 must end with '-'.
+
 Actual UTF-7 specification:
 Rule 1: direct characters: 62 alphanumeric characters and 9 symbols: ' ( ) , - . / : ?
 Rule 2: optional direct characters: all other printable characters in the range
- U+0020–U+007E except ~ \ + and space
-Plus sign (+) may be encoded as +- (special case).
-Plus sign (+) mean the start of 'modified Base64 encoded UTF-16'. The end of
- this block is indicated by any character not in the modified Base64.
+U+0020–U+007E except ~ \ + and space. Plus sign (+) may be encoded as +-
+(special case). Plus sign (+) mean the start of 'modified Base64 encoded UTF-16'.
+The end of this block is indicated by any character not in the modified Base64.
 If character after modified Base64 is a '-' then it is consumed.
+
 Example:
- "1 + 1 = 2" is encoded as "1 +- 1 +AD0 2" //+AD0 is the '=' sign.
- "£1" is encoded as "+AKM-1" //+AKM- is the '£' sign where '-' is consumed.
+  "1 + 1 = 2" is encoded as "1 +- 1 +AD0 2" //+AD0 is the '=' sign.
+  "£1" is encoded as "+AKM-1" //+AKM- is the '£' sign where '-' is consumed.
+
 A "+" character followed immediately by any character other than members
- of modified Base64 or "-" is an ill-formed sequence.
-Convert to Unicode code point then apply modified BASE64 (rfc2045) to it.
-Modified BASE64 do not use padding instead add extra bits.
-Lines should never be broken in the middle of a UTF-7 shifted sequence.
-Rule 3: Space, tab, carriage return and line feed may also be represented directly
- as single ASCII bytes. Further content transfer encoding may be needed if using
- in email environment.
+of modified Base64 or "-" is an ill-formed sequence. Convert to Unicode code
+point then apply modified BASE64 (rfc2045) to it. Modified BASE64 do not use
+padding instead add extra bits. Lines should never be broken in the middle of
+a UTF-7 shifted sequence. Rule 3: Space, tab, carriage return and line feed may
+also be represented directly as single ASCII bytes. Further content transfer
+encoding may be needed if using in email environment.
 */
 package utf7
 
