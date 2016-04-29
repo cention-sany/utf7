@@ -41,8 +41,6 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/text/encoding"
-	"golang.org/x/text/encoding/internal"
-	"golang.org/x/text/encoding/internal/identifier"
 	"golang.org/x/text/transform"
 )
 
@@ -52,18 +50,26 @@ const (
 	u7max = 0x7E     // Maximum self-representing UTF-7 value
 )
 
-var (
-	UTF7 encoding.Encoding = &utf7
-)
+// copy from golang.org/x/text/encoding/internal
+type simpleEncoding struct {
+	Decoder transform.Transformer
+	Encoder transform.Transformer
+}
 
-var utf7 = internal.Encoding{
-	&internal.SimpleEncoding{
+func (e *simpleEncoding) NewDecoder() *encoding.Decoder {
+	return &encoding.Decoder{Transformer: e.Decoder}
+}
+
+func (e *simpleEncoding) NewEncoder() *encoding.Encoder {
+	return &encoding.Encoder{Transformer: e.Encoder}
+}
+
+var (
+	UTF7 encoding.Encoding = &simpleEncoding{
 		utf7Decoder{},
 		utf7Encoder{},
-	},
-	"UTF7",
-	identifier.Unicode11UTF7,
-}
+	}
+)
 
 // ErrBadUTF7 is returned to indicate invalid modified UTF-7 encoding.
 var ErrBadUTF7 = errors.New("utf7: bad utf-7 encoding")
