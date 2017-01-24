@@ -1,3 +1,7 @@
+// Copyright 2013 The Go-IMAP Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 /*
 This package modified from:
 https://github.com/mxk/go-imap/blob/master/imap/utf7.go
